@@ -1,8 +1,8 @@
 {
-	"name": "shjs",
+	"name": "sh-js",
 	"version": "0.6.0",
 	"description": "Performing necromancy on 2007's SHJS - Syntax Highlighting in JavaScript",
-	"author": "Victor Azevedo",
+	"author": "gnombat <gnombat@users.sourceforge.net> (https://sourceforge.net/u/gnombat/profile/)",
 	"license": "GPL-3.0-only",
 	"keywords": [
 		"sh",
@@ -13,5 +13,11 @@
 	"scripts": {
 		"dev": "npx http-server -s -c-1"
 	},
-	"devDependencies": {}
+	"devDependencies": {},
+	"prettier": {
+		"useTabs": true,
+		"tabWidth": 4,
+		"printWidth": 128,
+		"semi": false
+	}
 }
