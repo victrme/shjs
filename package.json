@@ -1,0 +1,17 @@
+{
+	"name": "shjs",
+	"version": "0.6.0",
+	"description": "Performing necromancy on 2007's SHJS - Syntax Highlighting in JavaScript",
+	"author": "Victor Azevedo",
+	"license": "GPL-3.0-only",
+	"keywords": [
+		"sh",
+		"syntax",
+		"highlight"
+	],
+	"main": "src/index.js",
+	"scripts": {
+		"dev": "npx http-server -s -c-1"
+	},
+	"devDependencies": {}
+}
