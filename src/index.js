@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 if (!this.sh_languages) {
 	this.sh_languages = {}
@@ -8,16 +8,16 @@ function sh_isEmailAddress(url) {
 	if (/^mailto:/.test(url)) {
 		return false
 	}
-	return url.indexOf("@") !== -1
+	return url.indexOf('@') !== -1
 }
 
 function sh_setHref(tags, numTags, inputString) {
 	var url = inputString.substring(tags[numTags - 2].pos, tags[numTags - 1].pos)
-	if (url.length >= 2 && url.charAt(0) === "<" && url.charAt(url.length - 1) === ">") {
+	if (url.length >= 2 && url.charAt(0) === '<' && url.charAt(url.length - 1) === '>') {
 		url = url.substr(1, url.length - 2)
 	}
 	if (sh_isEmailAddress(url)) {
-		url = "mailto:" + url
+		url = 'mailto:' + url
 	}
 	tags[numTags - 2].node.href = url
 }
@@ -33,8 +33,8 @@ DOM element started by the tag. End tags do not have this property.
 @return  an array of tag objects
 */
 function sh_highlightString(inputString, language) {
-	var a = document.createElement("a")
-	var span = document.createElement("span")
+	var a = document.createElement('a')
+	var span = document.createElement('span')
 
 	// the result
 	var tags = []
@@ -69,13 +69,13 @@ function sh_highlightString(inputString, language) {
 		if (currentStyle !== style) {
 			if (currentStyle) {
 				tags[numTags++] = { pos: pos }
-				if (currentStyle === "sh_url") {
+				if (currentStyle === 'sh_url') {
 					sh_setHref(tags, numTags, inputString)
 				}
 			}
 			if (style) {
 				var clone
-				if (style === "sh_url") {
+				if (style === 'sh_url') {
 					clone = a.cloneNode(false)
 				} else {
 					clone = span.cloneNode(false)
@@ -192,7 +192,7 @@ function sh_highlightString(inputString, language) {
 		// end of the line
 		if (currentStyle) {
 			tags[numTags++] = { pos: pos }
-			if (currentStyle === "sh_url") {
+			if (currentStyle === 'sh_url') {
 				sh_setHref(tags, numTags, inputString)
 			}
 			currentStyle = null
@@ -217,14 +217,8 @@ function sh_extractTagsFromNodeList(nodeList, result) {
 		var node = nodeList.item(i)
 		switch (node.nodeType) {
 			case 1:
-				if (node.nodeName.toLowerCase() === "br") {
-					var terminator
-					if (/MSIE/.test(navigator.userAgent)) {
-						terminator = "\r"
-					} else {
-						terminator = "\n"
-					}
-					result.text.push(terminator)
+				if (node.nodeName.toLowerCase() === 'br') {
+					result.text.push('\n')
 					result.pos++
 				} else {
 					result.tags.push({ node: node.cloneNode(false), pos: result.pos })
@@ -256,7 +250,7 @@ function sh_extractTags(element, tags) {
 	result.tags = tags
 	result.pos = 0
 	sh_extractTagsFromNodeList(element.childNodes, result)
-	return result.text.join("")
+	return result.text.join('')
 }
 
 /**
@@ -298,7 +292,10 @@ function sh_mergeTags(originalTags, highlightTags) {
 				result.push({ pos: originalTag.pos })
 
 				// new start tag
-				highlightTags[highlightIndex] = { node: highlightTag.node.cloneNode(false), pos: originalTag.pos }
+				highlightTags[highlightIndex] = {
+					node: highlightTag.node.cloneNode(false),
+					pos: originalTag.pos,
+				}
 			}
 		}
 	}
@@ -368,17 +365,18 @@ function sh_insertTags(tags, text) {
 /**
 Highlights an element containing source code.  Upon completion of this function,
 the element will have been placed in the "sh_sourceCode" class.
-@param  element  a DOM <pre> element containing the source code to be highlighted
-@param  language  a language definition object
+@param {Element} element - a DOM <pre> element containing the source code to be highlighted
+@param {Object} language - a language definition object
 */
 function sh_highlightElement(element, language) {
-	element.classList.add("sh_sourceCode")
+	element.classList.add('sh_sourceCode')
 
-	var originalTags = []
-	var inputString = sh_extractTags(element, originalTags)
-	var highlightTags = sh_highlightString(inputString, language)
-	var tags = sh_mergeTags(originalTags, highlightTags)
-	var documentFragment = sh_insertTags(tags, inputString)
+	const originalTags = []
+	const inputString = sh_extractTags(element, originalTags)
+	const highlightTags = sh_highlightString(inputString, language)
+	const tags = sh_mergeTags(originalTags, highlightTags)
+	const documentFragment = sh_insertTags(tags, inputString)
+
 	while (element.hasChildNodes()) {
 		element.removeChild(element.firstChild)
 	}
@@ -393,25 +391,19 @@ containing source code must be "pre" elements with a "class" attribute of
 identifies the element as containing "java" language source code.
 */
 function sh_highlightDocument() {
-	var nodeList = document.getElementsByTagName("pre")
-	for (var i = 0; i < nodeList.length; i++) {
-		var element = nodeList.item(i)
-		var htmlClasses = [...element.classList]
-
-		for (var j = 0; j < htmlClasses.length; j++) {
-			var htmlClass = htmlClasses[j].toLowerCase()
-
-			if (htmlClass === "sh_sourcecode") {
+	for (const element of document.querySelectorAll('pre')) {
+		for (const classItem of element.classList) {
+			if (classItem.toLowerCase() === 'sh_sourcecode') {
 				continue
 			}
 
-			if (htmlClass.substring(0, 3) === "sh_") {
-				var language = htmlClass.substring(3)
+			if (classItem.substring(0, 3) === 'sh_') {
+				var language = classItem.substring(3).toLowerCase()
 
 				if (language in sh_languages) {
 					sh_highlightElement(element, sh_languages[language])
 				} else {
-					throw `Found <pre> element with class="${htmlClass}", but no such language exists`
+					throw `Found <pre> element with class="${classItem}", but no such language exists`
 				}
 
 				break
