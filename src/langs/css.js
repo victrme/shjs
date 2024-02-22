@@ -7,7 +7,7 @@ sh_languages["css"] = [
 		[/\/\//g, "sh_comment", 7],
 		[/\/\*\*/g, "sh_comment", 8],
 		[/\/\*/g, "sh_comment", 9],
-		[/(?:\.|#)[A-Za-z0-9_]+/g, "sh_selector", -1],
+		[/(?:\.|#)[A-Za-z0-9_-]+/g, "sh_selector", -1],
 		[/\{/g, "sh_cbracket", 10, 1],
 		[/~|!|%|\^|\*|\(|\)|-|\+|=|\[|\]|\\|:|;|,|\.|\/|\?|&|<|>|\|/g, "sh_symbol", -1],
 	],
