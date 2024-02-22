@@ -5,8 +5,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Demo page | SHJS - Syntax Highlighting in JavaScript</title>
 
-		<link rel="stylesheet" href="../src/sh_style.css" />
-
 		<style>
 			body {
 				max-width: 400px;
@@ -21,14 +19,15 @@
 			}
 		</style>
 
-		<script src="../src/sh_main.js"></script>
-		<script src="../src/lang/sh_css.js"></script>
+		<script src="../src/index.js"></script>
+		<script src="../src/langs/css.js"></script>
+		<link href="../src/themes/emacs.css" rel="stylesheet" />
 
 		<script defer>
 			window.onload = function () {
 				sh_highlightDocument()
 
-				document.querySelector('pre').addEventListener('input', () => {
+				document.querySelector("pre").addEventListener("input", () => {
 					sh_highlightDocument()
 				})
 			}
