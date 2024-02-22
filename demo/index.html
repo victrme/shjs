@@ -3,39 +3,97 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Demo page | SHJS - Syntax Highlighting in JavaScript</title>
+		<title>SHJS - Syntax Highlighting in JavaScript</title>
 
 		<style>
 			body {
 				max-width: 400px;
 				margin: auto;
+				color: white;
+				background-color: black;
 			}
 
 			pre {
 				width: 100%;
 				height: 400px;
 				resize: vertical;
-				border: 1px solid;
+				border: 1px solid #444;
+				padding: 1em;
+				outline: none;
 			}
 		</style>
 
 		<script src="../src/index.js"></script>
 		<script src="../src/langs/css.js"></script>
-		<link href="../src/themes/emacs.css" rel="stylesheet" />
+		<link href="../src/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
 
 		<script defer>
 			window.onload = function () {
-				document.querySelector("pre").addEventListener("input", sh_highlightDocument)
 				sh_highlightDocument()
+
+				document.querySelector("pre").addEventListener("input", () => {
+					sh_highlightDocument()
+				})
+
+				document.querySelector("select").addEventListener("change", (event) => {
+					const link = document.getElementById("theme-link")
+					const val = event.target.value
+					link.href = `../src/themes/${val}.css`
+				})
 			}
 		</script>
 	</head>
 	<body>
-		<h1>Hello world</h1>
+		<h1>SHJS - Syntax Highlighting in JavaScript</h1>
 		<pre contenteditable="" spellcheck="false" class="sh_css sh_sourceCode">
 .move-seconds {
   -webkit-display: none;
 }</pre
 		>
+		<label>
+			<span>Themes</span>
+			<select name="themes" id="select-themes">
+				<option value="acid">acid</option>
+				<option value="berries-dark">berries-dark</option>
+				<option value="berries-light">berries-light</option>
+				<option value="bipolar">bipolar</option>
+				<option value="blacknblue">blacknblue</option>
+				<option value="bright">bright</option>
+				<option value="contrast">contrast</option>
+				<option value="darkblue">darkblue</option>
+				<option value="darkness">darkness</option>
+				<option value="default">default</option>
+				<option value="desert">desert</option>
+				<option value="dull">dull</option>
+				<option value="easter">easter</option>
+				<option value="emacs">emacs</option>
+				<option value="golden">golden</option>
+				<option value="greenlcd">greenlcd</option>
+				<option value="ide-anjuta">ide-anjuta</option>
+				<option value="ide-codewarrior">ide-codewarrior</option>
+				<option value="ide-devcpp">ide-devcpp</option>
+				<option value="ide-eclipse">ide-eclipse</option>
+				<option value="ide-kdev">ide-kdev</option>
+				<option value="ide-msvcpp">ide-msvcpp</option>
+				<option value="kwrite">kwrite</option>
+				<option value="matlab">matlab</option>
+				<option value="navy">navy</option>
+				<option value="nedit">nedit</option>
+				<option value="neon">neon</option>
+				<option value="night">night</option>
+				<option value="pablo">pablo</option>
+				<option value="peachpuff">peachpuff</option>
+				<option value="print">print</option>
+				<option value="rand01">rand01</option>
+				<option value="the">the</option>
+				<option value="typical">typical</option>
+				<option value="vampire">vampire</option>
+				<option value="vim-dark" selected>vim-dark</option>
+				<option value="vim">vim</option>
+				<option value="whatis">whatis</option>
+				<option value="whitengrey">whitengrey</option>
+				<option value="zellner">zellner</option>
+			</select>
+		</label>
 	</body>
 </html>
