@@ -1,13 +1,8 @@
-/*
-SHJS - Syntax Highlighting in JavaScript
-Copyright (C) 2007, 2008 gnombat@users.sourceforge.net
-License: http://shjs.sourceforge.net/doc/gplv3.html
-*/
+"use strict"
 
 if (!this.sh_languages) {
 	this.sh_languages = {}
 }
-var sh_requests = {}
 
 function sh_isEmailAddress(url) {
 	if (/^mailto:/.test(url)) {
@@ -27,28 +22,6 @@ function sh_setHref(tags, numTags, inputString) {
 	tags[numTags - 2].node.href = url
 }
 
-/*
-Konqueror has a bug where the regular expression /$/g will not match at the end
-of a line more than once:
-
-  var regex = /$/g;
-  var match;
-
-  var line = '1234567890';
-  regex.lastIndex = 10;
-  match = regex.exec(line);
-
-  var line2 = 'abcde';
-  regex.lastIndex = 5;
-  match = regex.exec(line2);  // fails
-*/
-function sh_konquerorExec(s) {
-	var result = [""]
-	result.index = s.length
-	result.input = s
-	return result
-}
-
 /**
 Highlights all elements containing source code in a text string.  The return
 value is an array of objects, each representing an HTML start or end tag.  Each
@@ -60,20 +33,6 @@ DOM element started by the tag. End tags do not have this property.
 @return  an array of tag objects
 */
 function sh_highlightString(inputString, language) {
-	if (/Konqueror/.test(navigator.userAgent)) {
-		if (!language.konquered) {
-			for (var s = 0; s < language.length; s++) {
-				for (var p = 0; p < language[s].length; p++) {
-					var r = language[s][p][0]
-					if (r.source === "$") {
-						r.exec = sh_konquerorExec
-					}
-				}
-			}
-			language.konquered = true
-		}
-	}
-
 	var a = document.createElement("a")
 	var span = document.createElement("span")
 
@@ -247,31 +206,6 @@ function sh_highlightString(inputString, language) {
 ////////////////////////////////////////////////////////////////////////////////
 // DOM-dependent functions
 
-function sh_getClasses(element) {
-	var result = []
-	var htmlClass = element.className
-	if (htmlClass && htmlClass.length > 0) {
-		var htmlClasses = htmlClass.split(" ")
-		for (var i = 0; i < htmlClasses.length; i++) {
-			if (htmlClasses[i].length > 0) {
-				result.push(htmlClasses[i])
-			}
-		}
-	}
-	return result
-}
-
-function sh_addClass(element, name) {
-	var htmlClasses = sh_getClasses(element)
-	for (var i = 0; i < htmlClasses.length; i++) {
-		if (name.toLowerCase() === htmlClasses[i].toLowerCase()) {
-			return
-		}
-	}
-	htmlClasses.push(name)
-	element.className = htmlClasses.join(" ")
-}
-
 /**
 Extracts the tags from an HTML DOM NodeList.
 @param  nodeList  a DOM NodeList
@@ -438,7 +372,8 @@ the element will have been placed in the "sh_sourceCode" class.
 @param  language  a language definition object
 */
 function sh_highlightElement(element, language) {
-	sh_addClass(element, "sh_sourceCode")
+	element.classList.add("sh_sourceCode")
+
 	var originalTags = []
 	var inputString = sh_extractTags(element, originalTags)
 	var highlightTags = sh_highlightString(inputString, language)
@@ -447,45 +382,8 @@ function sh_highlightElement(element, language) {
 	while (element.hasChildNodes()) {
 		element.removeChild(element.firstChild)
 	}
+
 	element.appendChild(documentFragment)
-}
-
-function sh_getXMLHttpRequest() {
-	if (window.ActiveXObject) {
-		return new ActiveXObject("Msxml2.XMLHTTP")
-	} else if (window.XMLHttpRequest) {
-		return new XMLHttpRequest()
-	}
-	throw "No XMLHttpRequest implementation available"
-}
-
-function sh_load(language, element, prefix, suffix) {
-	if (language in sh_requests) {
-		sh_requests[language].push(element)
-		return
-	}
-	sh_requests[language] = [element]
-	var request = sh_getXMLHttpRequest()
-	var url = prefix + "sh_" + language + suffix
-	request.open("GET", url, true)
-	request.onreadystatechange = function () {
-		if (request.readyState === 4) {
-			try {
-				if (!request.status || request.status === 200) {
-					eval(request.responseText)
-					var elements = sh_requests[language]
-					for (var i = 0; i < elements.length; i++) {
-						sh_highlightElement(elements[i], sh_languages[language])
-					}
-				} else {
-					throw "HTTP error: status " + request.status
-				}
-			} finally {
-				request = null
-			}
-		}
-	}
-	request.send(null)
 }
 
 /**
@@ -494,11 +392,11 @@ containing source code must be "pre" elements with a "class" attribute of
 "sh_LANGUAGE", where LANGUAGE is a valid language identifier; e.g., "sh_java"
 identifies the element as containing "java" language source code.
 */
-function sh_highlightDocument(prefix, suffix) {
+function sh_highlightDocument() {
 	var nodeList = document.getElementsByTagName("pre")
 	for (var i = 0; i < nodeList.length; i++) {
 		var element = nodeList.item(i)
-		var htmlClasses = sh_getClasses(element)
+		var htmlClasses = [...element.classList]
 
 		for (var j = 0; j < htmlClasses.length; j++) {
 			var htmlClass = htmlClasses[j].toLowerCase()
@@ -507,15 +405,13 @@ function sh_highlightDocument(prefix, suffix) {
 				continue
 			}
 
-			if (htmlClass.substr(0, 3) === "sh_") {
+			if (htmlClass.substring(0, 3) === "sh_") {
 				var language = htmlClass.substring(3)
 
 				if (language in sh_languages) {
 					sh_highlightElement(element, sh_languages[language])
-				} else if (typeof prefix === "string" && typeof suffix === "string") {
-					sh_load(language, element, prefix, suffix)
 				} else {
-					throw 'Found <pre> element with class="' + htmlClass + '", but no such language exists'
+					throw `Found <pre> element with class="${htmlClass}", but no such language exists`
 				}
 
 				break
