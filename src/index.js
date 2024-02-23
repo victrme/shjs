@@ -1,12 +1,14 @@
 'use strict'
 
-if (!this.sh_languages) {
-	this.sh_languages = {}
-}
-
 /**
  * A language definition object
- * @typedef {[RegExp, string, number, number]} Language
+ * @typedef {LanguagePattern[][]} Language
+ */
+
+/**
+ * A pattern with an expression to match, a css class,
+ * a keyword position (?), and an state type (?)
+ * @typedef {[RegExp, string, number, number?]} LanguagePattern
  */
 
 /**
@@ -61,28 +63,30 @@ function sh_highlightString(inputString, language) {
 	const a = document.createElement('a')
 	const span = document.createElement('span')
 
-	/**
-	 * Result tags
-	 * @type {{node: Node, pos: number}[]} */
+	/** @type {{node: Node, pos: number}[]} */
 	let tags = []
 
-	let numTags = 0
-
-	/**
-	 * Each element is a pattern object from language
-	 * @type {[RegExp, string, number, number][]} */
+	/** @type {[RegExp, string, number, number][]} */
 	let patternStack = []
+
+	/** @type {string | null} */
+	let currentStyle = null
 
 	// the current position within inputString
 	let pos = 0
+	let numTags = 0
 
-	// the name of the current style, or null if there is no current style
-	let currentStyle = null
+	/**
+	 * TODO: I think this creates tags ?
+	 * @param {string} str - String found using pattern
+	 * @param {string} style - Style class of a language pattern
+	 * @returns {void}
+	 */
+	const output = (str, style) => {
+		const length = str.length
 
-	const output = (s, style) => {
-		const length = s.length
-
-		// this is more than just an optimization - we don't want to output empty <span></span> elements
+		// this is more than just an optimization
+		// we don't want to output empty <span></span> elements
 		if (length === 0) {
 			return
 		}
@@ -93,10 +97,10 @@ function sh_highlightString(inputString, language) {
 			if (stackLength !== 0) {
 				const pattern = patternStack[stackLength - 1]
 				const isEnvironnement = !pattern[3]
+				const patternStyle = pattern[1]
 
-				// use the style for this environment
-				if (isEnvironnement) {
-					style = pattern[1]
+				if (isEnvironnement && patternStyle) {
+					style = patternStyle
 				}
 			}
 		}
@@ -133,9 +137,9 @@ function sh_highlightString(inputString, language) {
 
 	while (pos < inputStringLength) {
 		const endOfLineMatch = endOfLinePattern.exec(inputString)
+		let startOfNextLine = -1
 		let start = pos
 		let end = -1
-		let startOfNextLine
 
 		if (endOfLineMatch === null) {
 			end = inputStringLength
@@ -147,36 +151,38 @@ function sh_highlightString(inputString, language) {
 
 		const line = inputString.substring(start, end)
 
-		let matchCache = []
-
+		// what in tarnation
 		for (;;) {
 			const posWithinLine = pos - start
 			const stackLength = patternStack.length
 			const stateIndex = stackLength > 0 ? patternStack[stackLength - 1][2] : 0
 			const state = language[stateIndex]
 			const numPatterns = state.length
-			let mc = matchCache[stateIndex]
 
-			if (!mc) {
-				mc = matchCache[stateIndex] = []
-			}
+			/** @type {(RegExpExecArray | null)[]} */
+			let matchCache = []
 
+			/** @type {RegExpExecArray | null} */
+			let match = null
+
+			/** @type {RegExpExecArray | null} */
 			let bestMatch = null
+
 			let bestPatternIndex = -1
 
 			for (let i = 0; i < numPatterns; i++) {
-				let match
+				const posBeforeMatch = posWithinLine <= matchCache[i]?.index
 
-				if (i < mc.length && (mc[i] === null || posWithinLine <= mc[i].index)) {
-					match = mc[i]
+				if (i < matchCache.length && posBeforeMatch) {
+					match = matchCache[i]
 				} else {
-					let regex = state[i][0]
+					const regex = state[i][0]
 					regex.lastIndex = posWithinLine
 					match = regex.exec(line)
-					mc[i] = match
+					matchCache[i] = match
 				}
 
-				if (match !== null && (bestMatch === null || match.index < bestMatch.index)) {
+				if (match && match.index < bestMatch?.index) {
 					bestMatch = match
 					bestPatternIndex = i
 
@@ -246,9 +252,6 @@ function sh_highlightString(inputString, language) {
 	return tags
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// DOM-dependent functions
-
 /**
  * Extracts the tags from an HTML DOM NodeList.
  * @param {NodeListOf<Node>} nodeList - a DOM NodeList
@@ -288,9 +291,9 @@ function sh_extractTagsFromNodeList(nodeList, result) {
  * Extracts the tags from the text of an HTML element. The extracted tags will be
  * returned as an array of tag objects. See sh_highlightString for the format of
  * the tag objects.
- * @param {Element} element - a DOM element
- * @param {Tag[]} tags - an empty array; the extracted tag objects will be returned in it
- * @return {string} the text of the element
+ * @param {Element} element A DOM element
+ * @param {Tag[]} tags An empty array; the extracted tag objects will be returned in it
+ * @return {string} The text of the element
  * @see  sh_highlightString
  */
 function sh_extractTags(element, tags) {
@@ -301,9 +304,9 @@ function sh_extractTags(element, tags) {
 
 /**
  * Merges the original tags from an element with the tags produced by highlighting.
- * @param {Tag[]} originalTags - an array containing the original tags
- * @param {Tag[]} highlightTags - an array containing the highlighting tags these must not overlap
- * @result {Tag[]} - an array containing the merged tags
+ * @param {Tag[]} originalTags An array containing the original tags
+ * @param {Tag[]} highlightTags An array containing the highlighting tags these must not overlap
+ * @result {Tag[]} An array containing the merged tags
  */
 function sh_mergeTags(originalTags, highlightTags) {
 	//
@@ -436,16 +439,17 @@ function sh_highlightElement(element, language) {
  * containing source code must be "pre" elements with a "class" attribute of
  * "sh_LANGUAGE", where LANGUAGE is a valid language identifier; e.g., "sh_java"
  * identifies the element as containing "java" language source code.
+ * @param {Object.<string, Language>} langs - List of imported language objects
  */
-function sh_highlightDocument() {
+function sh_highlightDocument(langs) {
 	for (const element of document.querySelectorAll('pre')) {
 		const classItem = [...element.classList].find((cl) => cl.startsWith('sh_'))
 
 		if (classItem) {
-			const language = classItem.substring(3).toLowerCase()
+			const langName = classItem.substring(3).toLowerCase()
 
-			if (language in sh_languages) {
-				sh_highlightElement(element, sh_languages[language])
+			if (langName in langs) {
+				sh_highlightElement(element, langs[langName])
 			} else {
 				throw `Found <pre> element with class="${classItem}", but no such language exists`
 			}

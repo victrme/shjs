@@ -26,16 +26,21 @@
 		</style>
 
 		<script src="../src/index.js"></script>
-		<script src="../src/langs/css.js"></script>
-		<script src="../src/langs/javascript.js"></script>
 		<link href="../src/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
 
-		<script defer>
+		<script type="module">
+			import javascript from '../src/langs/javascript.js'
+			import css from '../src/langs/css.js'
+
+			console.time()
+
 			window.onload = function () {
-				sh_highlightDocument()
+				sh_highlightDocument({ css, javascript })
+
+				console.timeEnd()
 
 				document.querySelector('pre').addEventListener('input', () => {
-					sh_highlightDocument()
+					sh_highlightDocument({ css, javascript })
 				})
 
 				document.querySelector('select').addEventListener('change', (event) => {
