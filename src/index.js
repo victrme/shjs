@@ -57,7 +57,7 @@ function sh_setHref(tags, numTags, inputString) {
  * DOM element started by the tag. End tags do not have this property.
  * @param {string} inputString - a text string
  * @param {Language} language - a language definition object
- * @return an array of tag objects
+ * @return {Tag[]} an array of tag objects
  */
 function sh_highlightString(inputString, language) {
 	const a = document.createElement('a')
@@ -151,6 +151,15 @@ function sh_highlightString(inputString, language) {
 
 		const line = inputString.substring(start, end)
 
+		/** @type {(RegExpExecArray | null)[]} */
+		let matchCache = []
+
+		/** @type {RegExpExecArray | null} */
+		let match = null
+
+		/** @type {RegExpExecArray | null} */
+		let bestMatch = null
+
 		// what in tarnation
 		for (;;) {
 			const posWithinLine = pos - start
@@ -158,15 +167,6 @@ function sh_highlightString(inputString, language) {
 			const stateIndex = stackLength > 0 ? patternStack[stackLength - 1][2] : 0
 			const state = language[stateIndex]
 			const numPatterns = state.length
-
-			/** @type {(RegExpExecArray | null)[]} */
-			let matchCache = []
-
-			/** @type {RegExpExecArray | null} */
-			let match = null
-
-			/** @type {RegExpExecArray | null} */
-			let bestMatch = null
 
 			let bestPatternIndex = -1
 
@@ -182,7 +182,7 @@ function sh_highlightString(inputString, language) {
 					matchCache[i] = match
 				}
 
-				if (match && match.index < bestMatch?.index) {
+				if (match && (!bestMatch || match.index < bestMatch?.index)) {
 					bestMatch = match
 					bestPatternIndex = i
 
@@ -233,6 +233,8 @@ function sh_highlightString(inputString, language) {
 						break
 				}
 			}
+
+			match = bestMatch = null
 		}
 
 		// end of the line
@@ -250,118 +252,6 @@ function sh_highlightString(inputString, language) {
 	}
 
 	return tags
-}
-
-/**
- * Extracts the tags from an HTML DOM NodeList.
- * @param {NodeListOf<Node>} nodeList - a DOM NodeList
- * @param {{text: string, pos: number, tags: Tag}} result - an object with text, tags and pos properties
- */
-function sh_extractTagsFromNodeList(nodeList, result) {
-	const length = nodeList.length
-
-	for (let i = 0; i < length; i++) {
-		let node = nodeList.item(i)
-
-		switch (node.nodeType) {
-			case 1: {
-				if (node.nodeName.toLowerCase() === 'br') {
-					result.text.push('\n')
-					result.pos++
-				} else {
-					result.tags.push({ node: node.cloneNode(false), pos: result.pos })
-					sh_extractTagsFromNodeList(node.childNodes, result)
-					result.tags.push({ pos: result.pos })
-				}
-
-				break
-			}
-
-			case 3:
-			case 4: {
-				result.text.push(node.data)
-				result.pos += node.length
-				break
-			}
-		}
-	}
-}
-
-/**
- * Extracts the tags from the text of an HTML element. The extracted tags will be
- * returned as an array of tag objects. See sh_highlightString for the format of
- * the tag objects.
- * @param {Element} element A DOM element
- * @param {Tag[]} tags An empty array; the extracted tag objects will be returned in it
- * @return {string} The text of the element
- * @see  sh_highlightString
- */
-function sh_extractTags(element, tags) {
-	const result = { text: [], pos: 0, tags }
-	sh_extractTagsFromNodeList(element.childNodes, result)
-	return result.text.join('')
-}
-
-/**
- * Merges the original tags from an element with the tags produced by highlighting.
- * @param {Tag[]} originalTags An array containing the original tags
- * @param {Tag[]} highlightTags An array containing the highlighting tags these must not overlap
- * @result {Tag[]} An array containing the merged tags
- */
-function sh_mergeTags(originalTags, highlightTags) {
-	//
-	const numOriginalTags = originalTags.length
-	if (numOriginalTags === 0) {
-		return highlightTags
-	}
-
-	const numHighlightTags = highlightTags.length
-	if (numHighlightTags === 0) {
-		return originalTags
-	}
-
-	let result = []
-	let originalIndex = 0
-	let highlightIndex = 0
-
-	while (originalIndex < numOriginalTags && highlightIndex < numHighlightTags) {
-		let originalTag = originalTags[originalIndex]
-		let highlightTag = highlightTags[highlightIndex]
-
-		if (originalTag.pos <= highlightTag.pos) {
-			result.push(originalTag)
-			originalIndex++
-		} else {
-			result.push(highlightTag)
-
-			if (highlightTags[highlightIndex + 1].pos <= originalTag.pos) {
-				highlightIndex++
-				result.push(highlightTags[highlightIndex])
-				highlightIndex++
-			} else {
-				// new end tag
-				result.push({ pos: originalTag.pos })
-
-				// new start tag
-				highlightTags[highlightIndex] = {
-					node: highlightTag.node.cloneNode(false),
-					pos: originalTag.pos,
-				}
-			}
-		}
-	}
-
-	while (originalIndex < numOriginalTags) {
-		result.push(originalTags[originalIndex])
-		originalIndex++
-	}
-
-	while (highlightIndex < numHighlightTags) {
-		result.push(highlightTags[highlightIndex])
-		highlightIndex++
-	}
-
-	return result
 }
 
 /**
@@ -421,11 +311,9 @@ function sh_insertTags(tags, text) {
 function sh_highlightElement(element, language) {
 	element.classList.add('sh_sourceCode')
 
-	const originalTags = []
-	const inputString = sh_extractTags(element, originalTags)
+	const inputString = element.textContent
 	const highlightTags = sh_highlightString(inputString, language)
-	const tags = sh_mergeTags(originalTags, highlightTags)
-	const documentFragment = sh_insertTags(tags, inputString)
+	const documentFragment = sh_insertTags(highlightTags, inputString)
 
 	while (element.hasChildNodes()) {
 		element.removeChild(element.firstChild)
