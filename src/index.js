@@ -13,7 +13,7 @@
 
 /**
  * A tag object with its position
- * @typedef {{node: Node, pos: number}} Tag
+ * @typedef {{pos: number, tagName?: string, style?: string, href?: string}} Tag
  */
 
 /**
@@ -32,6 +32,7 @@ function sh_isEmailAddress(url) {
  * @param {Tag[]} tags
  * @param {number} numTags
  * @param {string} inputString
+ * @returns {Tag[]}
  */
 function sh_setHref(tags, numTags, inputString) {
 	const startPos = tags[numTags - 2].pos
@@ -46,7 +47,9 @@ function sh_setHref(tags, numTags, inputString) {
 		url = 'mailto:' + url
 	}
 
-	tags[numTags - 2].node.href = url
+	tags[numTags - 2].href = url
+
+	return tags
 }
 
 /**
@@ -60,10 +63,7 @@ function sh_setHref(tags, numTags, inputString) {
  * @return {Tag[]} an array of tag objects
  */
 function sh_highlightString(inputString, language) {
-	const a = document.createElement('a')
-	const span = document.createElement('span')
-
-	/** @type {{node: Node, pos: number}[]} */
+	/** @type {{pos: number, tagName?: string, style?: string, href?: string}[]} */
 	let tags = []
 
 	/** @type {[RegExp, string, number, number][]} */
@@ -77,7 +77,7 @@ function sh_highlightString(inputString, language) {
 	let numTags = 0
 
 	/**
-	 * TODO: I think this creates tags ?
+	 * Create tags
 	 * @param {string} str - String found using pattern
 	 * @param {string} style - Style class of a language pattern
 	 * @returns {void}
@@ -105,25 +105,21 @@ function sh_highlightString(inputString, language) {
 			}
 		}
 
-		if (currentStyle !== style) {
-			if (currentStyle) {
-				tags[numTags++] = { pos }
+		if (currentStyle) {
+			tags[numTags++] = { pos }
 
-				if (currentStyle === 'sh_url') {
-					sh_setHref(tags, numTags, inputString)
-				}
+			if (currentStyle === 'sh_url') {
+				sh_setHref(tags, numTags, inputString)
 			}
+		}
 
-			if (style) {
-				const isUrl = style === 'sh_url'
-				const clone = (isUrl ? a : span).cloneNode(false)
+		if (style) {
+			const isUrl = style === 'sh_url'
 
-				clone.className = style
-
-				tags[numTags++] = {
-					node: clone,
-					pos: pos,
-				}
+			tags[numTags++] = {
+				tagName: isUrl ? 'a' : 'span',
+				style: style,
+				pos: pos,
 			}
 		}
 
@@ -242,7 +238,7 @@ function sh_highlightString(inputString, language) {
 			tags[numTags++] = { pos }
 
 			if (currentStyle === 'sh_url') {
-				sh_setHref(tags, numTags, inputString)
+				tags = sh_setHref(tags, numTags, inputString)
 			}
 
 			currentStyle = null
@@ -258,68 +254,60 @@ function sh_highlightString(inputString, language) {
  * Inserts tags into text.
  * @param {Tag[]} tags - an array of tag objects
  * @param {string} text - a string representing the text
- * @return {DocumentFragment} a DOM DocumentFragment representing the resulting HTML
+ * @param {Element} container - the container to append the tags into
+ * @return {void}
  */
-function sh_insertTags(tags, text) {
-	const result = document.createDocumentFragment()
-	const numTags = tags.length
-	const textLength = text.length
-	let currentNode = result
-	let tagIndex = 0
+function sh_insertTags(tags, text, container) {
 	let textPos = 0
+	let node
 
-	// output one tag or text node every iteration
-	while (textPos < textLength || tagIndex < numTags) {
-		let tag
-		let tagPos
+	for (let ii = 0; ii < text.length; ii++) {
+		const tag = tags[ii]
 
-		if (tagIndex < numTags) {
-			tag = tags[tagIndex]
-			tagPos = tag.pos
-		} else {
-			tagPos = textLength
-		}
+		console.log(text.length)
 
-		if (tagPos <= textPos) {
-			// output the tag
-			if (tag.node) {
-				// start tag
-				let newNode = tag.node
-				currentNode.appendChild(newNode)
-				currentNode = newNode
-			} else {
-				// end tag
-				currentNode = currentNode.parentNode
+		if (tag?.tagName) {
+			const { tagName, href, style } = tag
+			node = document.createElement(tagName)
+
+			if (href) {
+				node.href = href
 			}
-			tagIndex++
-		} else {
-			// output text
-			currentNode.appendChild(document.createTextNode(text.substring(textPos, tagPos)))
-			textPos = tagPos
+
+			node.className = style
+		}
+		//
+		else if (tag.pos <= textPos) {
+			node.textContent = text.substring(textPos, tags[ii].pos)
+			container.appendChild(node)
+		}
+		//
+		else if (tag.pos > textPos) {
+			const substr = text.substring(textPos, tag.pos)
+			container.appendChild(document.createTextNode(substr))
+			textPos = tag.pos
 		}
 	}
-
-	return result
 }
+
+/** @type {Tag[]} */
+let previousTags = []
 
 /**
  * Highlights an element containing source code.  Upon completion of this function,
- * the element will have been placed in the "sh_sourceCode" class.
+ * the element will have been placed in the "sh_sourcecode" class.
  * @param {Element} element - a DOM <pre> element containing the source code to be highlighted
- * @param {Object} language - a language definition object
+ * @param {Language} language - a language definition object
  */
 function sh_highlightElement(element, language) {
-	element.classList.add('sh_sourceCode')
+	element.classList.add('sh_sourcecode')
 
-	const inputString = element.textContent
+	const inputString = element.innerText
 	const highlightTags = sh_highlightString(inputString, language)
-	const documentFragment = sh_insertTags(highlightTags, inputString)
 
-	while (element.hasChildNodes()) {
-		element.removeChild(element.firstChild)
-	}
-
-	element.appendChild(documentFragment)
+	element.innerText = ''
+	previousTags = highlightTags
+	sh_insertTags(highlightTags, inputString, element)
 }
 
 /**
@@ -334,7 +322,7 @@ function sh_highlightDocument(langs) {
 		const classItem = [...element.classList].find((cl) => cl.startsWith('sh_'))
 
 		if (classItem) {
-			const langName = classItem.substring(3).toLowerCase()
+			const langName = classItem.substring(3)
 
 			if (langName in langs) {
 				sh_highlightElement(element, langs[langName])
