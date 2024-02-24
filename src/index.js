@@ -261,31 +261,26 @@ function sh_insertTags(tags, text, container) {
 	let textPos = 0
 	let node
 
-	for (let ii = 0; ii < text.length; ii++) {
-		const tag = tags[ii]
+	for (let ii = 0; ii < tags.length; ii++) {
+		const { pos, tagName, style, href } = tags[ii]
+		const substr = text.substring(textPos, pos)
+		const isStartTag = tagName !== undefined
 
-		console.log(text.length)
-
-		if (tag?.tagName) {
-			const { tagName, href, style } = tag
+		if (isStartTag) {
+			container.appendChild(document.createTextNode(substr))
 			node = document.createElement(tagName)
+			node.className = style
 
 			if (href) {
 				node.href = href
 			}
-
-			node.className = style
-		}
-		//
-		else if (tag.pos <= textPos) {
-			node.textContent = text.substring(textPos, tags[ii].pos)
+		} else {
+			node.textContent = substr
 			container.appendChild(node)
 		}
-		//
-		else if (tag.pos > textPos) {
-			const substr = text.substring(textPos, tag.pos)
-			container.appendChild(document.createTextNode(substr))
-			textPos = tag.pos
+
+		if (pos > textPos) {
+			textPos = pos
 		}
 	}
 }
