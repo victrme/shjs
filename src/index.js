@@ -285,23 +285,19 @@ function sh_insertTags(tags, text, container) {
 	}
 }
 
-/** @type {Tag[]} */
-let previousTags = []
-
 /**
  * Highlights an element containing source code.  Upon completion of this function,
  * the element will have been placed in the "sh_sourcecode" class.
- * @param {Element} element - a DOM <pre> element containing the source code to be highlighted
  * @param {Language} language - a language definition object
+ * @param {Element} element - a DOM <pre> element containing the source code to be highlighted
  */
-function sh_highlightElement(element, language) {
+export function highlightElement(language, element) {
 	element.classList.add('sh_sourcecode')
 
 	const inputString = element.innerText
 	const highlightTags = sh_highlightString(inputString, language)
 
 	element.innerText = ''
-	previousTags = highlightTags
 	sh_insertTags(highlightTags, inputString, element)
 }
 
@@ -310,17 +306,17 @@ function sh_highlightElement(element, language) {
  * containing source code must be "pre" elements with a "class" attribute of
  * "sh_LANGUAGE", where LANGUAGE is a valid language identifier; e.g., "sh_java"
  * identifies the element as containing "java" language source code.
- * @param {Object.<string, Language>} langs - List of imported language objects
+ * @param {Object.<string, Language>} languages - List of imported language objects
  */
-function sh_highlightDocument(langs) {
+export function highlightDocument(languages) {
 	for (const element of document.querySelectorAll('pre')) {
 		const classItem = [...element.classList].find((cl) => cl.startsWith('sh_'))
 
 		if (classItem) {
-			const langName = classItem.substring(3)
+			const lang = classItem.substring(3)
 
-			if (langName in langs) {
-				sh_highlightElement(element, langs[langName])
+			if (lang in languages) {
+				highlightElement(languages[lang], element)
 			} else {
 				throw `Found <pre> element with class="${classItem}", but no such language exists`
 			}

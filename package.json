@@ -4,19 +4,24 @@
 	"description": "Performing necromancy on 2007's SHJS - Syntax Highlighting in JavaScript",
 	"author": "gnombat <gnombat@users.sourceforge.net> (https://sourceforge.net/u/gnombat/profile/)",
 	"license": "GPL-3.0-only",
-	"keywords": [
-		"sh",
-		"syntax",
-		"highlight"
-	],
+	"keywords": ["sh", "syntax", "highlight"],
 	"main": "src/index.js",
 	"type": "module",
 	"scripts": {
 		"dev": "npx http-server -c-1",
-		"build:esm": "node ./build.config.js TARGET=esm",
-		"build:browser": "node ./build.config.js TARGET=browser"
+		"build": "node ./build.config.js",
+		"build:esm": "TARGET=esm node ./build.config.js",
+		"build:browser": "TARGET=browser node ./build.config.js"
 	},
-	"devDependencies": {},
+	"devDependencies": {
+		"esbuild": "^0.20.1"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/esm/index.js",
+			"types": "./dist/esm/index.d.ts"
+		}
+	},
 	"prettier": {
 		"useTabs": true,
 		"tabWidth": 4,

@@ -25,22 +25,22 @@
 			}
 		</style>
 
-		<script src="../src/index.js"></script>
-		<link href="../src/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
+		<link href="../dist/browser/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
 
 		<script type="module">
-			import javascript from '../src/langs/javascript.js'
-			import css from '../src/langs/css.js'
+			import { highlightDocument } from '../dist/esm/index.js'
+			import javascript from '../dist/esm/langs/javascript.js'
+			import css from '../dist/esm/langs/css.js'
 
 			console.time()
 
 			window.onload = function () {
-				sh_highlightDocument({ css, javascript })
+				highlightDocument({ css, javascript })
 
 				console.timeEnd()
 
 				document.querySelector('pre').addEventListener('input', () => {
-					sh_highlightDocument({ css, javascript })
+					highlightDocument({ css, javascript })
 				})
 
 				document.querySelector('select').addEventListener('change', (event) => {
@@ -50,6 +50,27 @@
 				})
 			}
 		</script>
+
+		<!-- <script src="../dist/browser/sh_main.js"></script>
+		<script src="../dist/browser/langs/sh_css.js"></script>
+		<script src="../dist/browser/langs/sh_javascript.js"></script>
+		<link href="../dist/browser/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
+
+		<script type="module">
+			window.onload = function () {
+				sh_.highlightDocument({ css: sh_css, javascript: sh_javascript })
+
+				document.querySelector('pre').addEventListener('input', () => {
+					sh_.highlightDocument({ css: sh_css, javascript: sh_javascript })
+				})
+
+				document.querySelector('select').addEventListener('change', (event) => {
+					const link = document.getElementById('theme-link')
+					const val = event.target.value
+					link.href = `../src/themes/${val}.css`
+				})
+			}
+		</script> -->
 	</head>
 	<body>
 		<h1>SHJS - Syntax Highlighting in JavaScript</h1>
