@@ -1,0 +1,138 @@
+pre.sh_sourcecode {
+	background-color: #ffdab9;
+	color: #000000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_keyword {
+	color: #a52a2a;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_type {
+	color: #2e8b57;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_string {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_regexp {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_specialchar {
+	color: #6a5acd;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_comment {
+	color: #406090;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_number {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_preproc {
+	color: #cd00cd;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_function {
+	color: #521cc7;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_url {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_date {
+	color: #a52a2a;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_time {
+	color: #a52a2a;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_file {
+	color: #a52a2a;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_ip {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_name {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_variable {
+	color: #275fec;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_oldfile {
+	color: #6a5acd;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_newfile {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_difflines {
+	color: #a52a2a;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_selector {
+	color: #275fec;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_property {
+	color: #a52a2a;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_value {
+	color: #c00058;
+	font-weight: normal;
+	font-style: normal;
+}

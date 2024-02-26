@@ -1,0 +1,138 @@
+pre.sh_sourcecode {
+	background-color: #ffffff;
+	color: #696969;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_keyword {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_type {
+	color: #696969;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_string {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_regexp {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_specialchar {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_comment {
+	color: #1326a2;
+	font-weight: normal;
+	font-style: italic;
+}
+
+pre.sh_sourcecode .sh_number {
+	color: #bb00ff;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_preproc {
+	color: #470000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_function {
+	color: #000000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_url {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_date {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_time {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_file {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_ip {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_name {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_variable {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_oldfile {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_newfile {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_difflines {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_selector {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_property {
+	color: #696969;
+	font-weight: bold;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_value {
+	color: #008800;
+	font-weight: normal;
+	font-style: normal;
+}

@@ -1,0 +1,138 @@
+pre.sh_sourcecode {
+	background-color: #ffffff;
+	color: #000000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_keyword {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_type {
+	color: #4c73a6;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_string {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_regexp {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_specialchar {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_comment {
+	color: #b30000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_number {
+	color: #000000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_preproc {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_function {
+	color: #000000;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_url {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_date {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_time {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_file {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_ip {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_name {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_variable {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_oldfile {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_newfile {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_difflines {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_selector {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_property {
+	color: #0000b3;
+	font-weight: normal;
+	font-style: normal;
+}
+
+pre.sh_sourcecode .sh_value {
+	color: #666666;
+	font-weight: normal;
+	font-style: normal;
+}
