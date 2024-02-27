@@ -1,5 +1,5 @@
 {
-	"name": "sh-js",
+	"name": "@victr/shjs",
 	"version": "0.7.0",
 	"description": "ESM upgrade of 2007's SHJS - Syntax Highlighting in JavaScript",
 	"author": "gnombat <gnombat@users.sourceforge.net> (https://sourceforge.net/u/gnombat/profile/)",
