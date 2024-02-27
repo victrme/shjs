@@ -11,38 +11,31 @@ if (process.env.TARGET === undefined) {
 }
 
 function buildBrowser() {
-	copyFolderContents('src/themes', 'dist/browser/themes')
+	copyFolderContents('src/themes', 'build/themes')
 
 	esbuild.buildSync({
-		outfile: 'dist/browser/sh_main.js',
+		outfile: 'build/sh_main.js',
 		entryPoints: ['./src/index.js'],
 		globalName: `sh_`,
 		format: 'iife',
+		target: 'esnext',
 	})
 
 	for (const filename of fs.readdirSync('src/langs')) {
 		const lang = filename.replace('.js', '')
 
-		esbuild.buildSync({
-			outfile: `dist/browser/langs/sh_${lang}.js`,
+		esbuild.build({
+			outfile: `build/langs/sh_${lang}.js`,
 			entryPoints: [`./src/langs/${lang}.js`],
 			globalName: `sh_${lang}`,
 			format: 'iife',
+			target: 'esnext',
 		})
 	}
 }
 
 function buildESM() {
-	copyFolderContents('src/themes', 'dist/esm/themes')
-	copyFolderContents('src/langs', 'dist/esm/langs')
-
-	exec('tsc ./src/index.js --outDir ./dist/esm/ --allowJs --declaration --emitDeclarationOnly')
-
-	esbuild.buildSync({
-		outfile: 'dist/esm/index.js',
-		entryPoints: ['./src/index.js'],
-		format: 'esm',
-	})
+	exec('tsc ./src/index.js --outDir ./src/ --allowJs --declaration --emitDeclarationOnly')
 }
 
 //

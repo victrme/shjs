@@ -25,12 +25,12 @@
 			}
 		</style>
 
-		<link href="../dist/browser/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
+		<link href="../src/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
 
 		<script type="module">
-			import { highlightDocument } from '../dist/esm/index.js'
-			import javascript from '../dist/esm/langs/javascript.js'
-			import css from '../dist/esm/langs/css.js'
+			import { highlightDocument } from '../src/index.js'
+			import javascript from '../src/langs/javascript.js'
+			import css from '../src/langs/css.js'
 
 			console.time()
 
@@ -43,6 +43,12 @@
 					highlightDocument({ css, javascript })
 				})
 
+				document.querySelector('pre').addEventListener('keydown', (event) => {
+					const selObj = window.getSelection()
+					const selRange = selObj.getRangeAt(0)
+					console.log(selRange)
+				})
+
 				document.querySelector('select').addEventListener('change', (event) => {
 					const link = document.getElementById('theme-link')
 					const val = event.target.value
@@ -51,10 +57,10 @@
 			}
 		</script>
 
-		<!-- <script src="../dist/browser/sh_main.js"></script>
-		<script src="../dist/browser/langs/sh_css.js"></script>
-		<script src="../dist/browser/langs/sh_javascript.js"></script>
-		<link href="../dist/browser/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
+		<!-- <script src="../build/sh_main.js"></script>
+		<script src="../build/langs/sh_css.js"></script>
+		<script src="../build/langs/sh_javascript.js"></script>
+		<link href="../build/themes/vim-dark.css" rel="stylesheet" id="theme-link" />
 
 		<script type="module">
 			window.onload = function () {
@@ -67,7 +73,7 @@
 				document.querySelector('select').addEventListener('change', (event) => {
 					const link = document.getElementById('theme-link')
 					const val = event.target.value
-					link.href = `../src/themes/${val}.css`
+					link.href = `../build/themes/${val}.css`
 				})
 			}
 		</script> -->
