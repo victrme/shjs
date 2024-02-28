@@ -18,7 +18,7 @@ function buildBrowser() {
 		entryPoints: ['./src/index.js'],
 		globalName: `sh_`,
 		format: 'iife',
-		target: 'esnext',
+		target: 'es2022',
 	})
 
 	for (const filename of fs.readdirSync('src/langs')) {
@@ -29,7 +29,7 @@ function buildBrowser() {
 			entryPoints: [`./src/langs/${lang}.js`],
 			globalName: `sh_${lang}`,
 			format: 'iife',
-			target: 'esnext',
+			target: 'es2022',
 		})
 	}
 }

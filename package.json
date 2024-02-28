@@ -4,7 +4,11 @@
 	"description": "ESM upgrade of 2007's SHJS - Syntax Highlighting in JavaScript",
 	"author": "gnombat <gnombat@users.sourceforge.net> (https://sourceforge.net/u/gnombat/profile/)",
 	"license": "GPL-3.0-only",
-	"keywords": ["sh", "syntax", "highlight"],
+	"keywords": [
+		"sh",
+		"syntax",
+		"highlight"
+	],
 	"main": "src/index.js",
 	"type": "module",
 	"scripts": {
@@ -13,21 +17,23 @@
 		"build:esm": "TARGET=esm node ./build.config.js",
 		"build:browser": "TARGET=browser node ./build.config.js"
 	},
-	"devDependencies": {
-		"esbuild": "^0.20.1"
-	},
 	"exports": {
 		".": {
 			"import": "./src/index.js",
 			"types": "./src/index.d.ts"
 		}
 	},
-	"files": ["src"],
+	"files": [
+		"src"
+	],
 	"prettier": {
 		"useTabs": true,
 		"tabWidth": 4,
 		"printWidth": 100,
 		"semi": false,
 		"singleQuote": true
+	},
+	"devDependencies": {
+		"esbuild": "^0.20.1"
 	}
 }
