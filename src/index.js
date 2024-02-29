@@ -106,18 +106,15 @@ function sh_highlightString(inputString, language) {
 		}
 
 		if (currentStyle) {
-			tags[numTags++] = { pos }
+			tags[numTags++] = { pos: pos }
 
 			if (currentStyle === 'sh_url') {
-				sh_setHref(tags, numTags, inputString)
+				tags = sh_setHref(tags, numTags, inputString)
 			}
 		}
 
 		if (style) {
-			const isUrl = style === 'sh_url'
-
 			tags[numTags++] = {
-				tagName: isUrl ? 'a' : 'span',
 				style: style,
 				pos: pos,
 			}
@@ -258,30 +255,16 @@ function sh_highlightString(inputString, language) {
  * @return {void}
  */
 function sh_insertTags(tags, text, container) {
-	let textPos = 0
-	let node
+	for (let ii = 0; ii < tags.length - 1; ii++) {
+		const { pos, style, href } = tags[ii]
+		const substr = text.substring(pos, tags[ii + 1].pos)
+		const node = document.createElement(href ? 'a' : 'span')
 
-	for (let ii = 0; ii < tags.length; ii++) {
-		const { pos, tagName, style, href } = tags[ii]
-		const substr = text.substring(textPos, pos)
-		const isStartTag = tagName !== undefined
+		node.textContent = substr
+		if (style) node.className = style ?? ''
+		if (href) node.href = href
 
-		if (isStartTag) {
-			container.appendChild(document.createTextNode(substr))
-			node = document.createElement(tagName)
-			node.className = style
-
-			if (href) {
-				node.href = href
-			}
-		} else {
-			node.textContent = substr
-			container.appendChild(node)
-		}
-
-		if (pos > textPos) {
-			textPos = pos
-		}
+		container.appendChild(node)
 	}
 }
 
