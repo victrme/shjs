@@ -105,6 +105,10 @@ function sh_highlightString(inputString, language) {
 			}
 		}
 
+		if (!style && length > 0) {
+			tags[numTags++] = { pos: pos }
+		}
+
 		if (currentStyle) {
 			tags[numTags++] = { pos: pos }
 
@@ -242,6 +246,11 @@ function sh_highlightString(inputString, language) {
 		}
 
 		pos = startOfNextLine
+	}
+
+	// bad: Add missing plain text at the end
+	if (tags.at(-1).pos < inputStringLength) {
+		tags[numTags++] = { pos: inputStringLength }
 	}
 
 	return tags

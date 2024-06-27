@@ -63,6 +63,9 @@ var sh_ = (() => {
           }
         }
       }
+      if (!style && length > 0) {
+        tags[numTags++] = { pos };
+      }
       if (currentStyle) {
         tags[numTags++] = { pos };
         if (currentStyle === "sh_url") {
@@ -165,6 +168,9 @@ var sh_ = (() => {
         currentStyle = null;
       }
       pos = startOfNextLine;
+    }
+    if (tags.at(-1).pos < inputStringLength) {
+      tags[numTags++] = { pos: inputStringLength };
     }
     return tags;
   }
