@@ -38,10 +38,6 @@ function buildESM() {
 	exec('tsc ./src/index.js --outDir ./src/ --allowJs --declaration --emitDeclarationOnly')
 }
 
-//
-//	Helpers
-//
-
 function copyFolderContents(source, destination) {
 	const sourcePath = resolve(source)
 	const destinationPath = resolve(destination)
